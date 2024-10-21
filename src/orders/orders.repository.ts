@@ -26,7 +26,7 @@ export class OrderRepository extends Repository<OrderEntity> {
   async fetchOrders(
     query: FilterQueryParams,
     username: string,
-    paginationParams: IPaginationParams,
+    paginationParams: IPaginationParams
   ) {
     const { search, status } = query;
 
@@ -38,25 +38,18 @@ export class OrderRepository extends Repository<OrderEntity> {
 
     const { skip, take } = getPaginationParams(paginationParams);
     dbQuery.skip(skip).take(take);
-    console.log(
-      "search",
-      await dbQuery
-        .leftJoinAndSelect("order.products", "product")
-        .getManyAndCount(),
-    );
+    dbQuery.leftJoinAndSelect("order.products", "product");
 
-    // search &&
-    //   dbQuery
-    //     .leftJoinAndSelect("order.products", "product")
-    //     .andWhere(
-    //       "(product.name ILIKE :search OR product.description ILIKE :search)",
-    //       {
-    //         search: `%${search}%`,
-    //       }
-    //     );
-    // status && dbQuery.andWhere("order.status=:status", { status });
+    search &&
+      dbQuery.andWhere(
+        "(product.name ILIKE :search OR product.description ILIKE :search)",
+        {
+          search: `%${search}%`,
+        }
+      );
+    status && dbQuery.andWhere("order.status=:status", { status });
 
-    // return await dbQuery.getManyAndCount();
+    return await dbQuery.getManyAndCount();
   }
 
   async fetchOrderInfo(id: string, username: string): Promise<OrderEntity> {
@@ -77,7 +70,7 @@ export class OrderRepository extends Repository<OrderEntity> {
   async updateOrder(
     id: string,
     body: UpdateOrder,
-    username: string,
+    username: string
   ): Promise<OrderEntity> {
     const updatedOrder = await this.update({ id, userId: username }, body);
     if (updatedOrder.affected === 0)
@@ -93,7 +86,7 @@ export class OrderRepository extends Repository<OrderEntity> {
       status: IOrderStatus.PROCESSING,
       userId: username,
     });
-    await this.insert(order);
+    await this.save(order);
     return order;
   }
 }

@@ -33,4 +33,8 @@ export class ProductEntity extends DateEntity {
 
   @ManyToMany(() => OrderEntity, (order) => order.products)
   orders?: OrderEntity[];
+
+  // @ManyToOne(() => OrderEntity, (order) => order.products)
+  // @JoinColumn({ name: "orderId" })
+  // order?: OrderEntity;
 }

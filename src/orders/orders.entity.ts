@@ -5,6 +5,7 @@ import {
   JoinTable,
   ManyToMany,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { UserEntity } from "src/user/user.entity";
@@ -43,4 +44,7 @@ export class OrderEntity extends DateEntity {
     },
   })
   products: ProductEntity[];
+
+  // @OneToMany(() => ProductEntity, (product) => product.order)
+  // products: ProductEntity[];
 }
