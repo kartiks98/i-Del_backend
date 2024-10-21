@@ -1,0 +1,23 @@
+sudo apt install postgresql
+
+//add server locally
+sudo su - postgres
+psql
+postgres=# create user bob with superuser password 'admin';
+
+\du
+\q
+ALTER USER postgres PASSWORD 'admin';
+sudo -s
+
+//add server in docker
+docker pull postgres
+docker run -d --name mypostgres -p 5432 -e POSTGRES_PASSWORD=yourpassword postgres
+
+docker run -d --name mypostgres -p 5432:5432 -e POSTGRES_PASSWORD=yourpassword postgres
+docker container ps
+docker container stop mypostgres
+docker container rm mypostgres
+
+//kill a proccess of a specific port
+npx kill-port 8080
