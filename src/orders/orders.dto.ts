@@ -13,9 +13,10 @@ const orderStatusErrorMessage = `Status could only be one of the following : ${O
 
 export class CreateOrder {
   @IsNotEmpty()
-  @IsInt()
-  @Min(1)
-  quantity: number;
+  @IsArray()
+  @IsInt({ each: true })
+  @Min(1, { each: true })
+  quantities: number[];
 
   @IsNotEmpty()
   @IsArray()
@@ -25,8 +26,10 @@ export class CreateOrder {
 
 export class UpdateOrder {
   @IsOptional()
-  @IsInt()
-  quantity: number;
+  @IsArray()
+  @IsInt({ each: true })
+  @Min(1, { each: true })
+  quantities: number[];
 
   @IsOptional()
   @IsEnum(IOrderStatus, {

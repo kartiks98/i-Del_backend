@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 import { OrderRepository } from "./orders.repository";
 import { CreateOrder, FilterQueryParams, UpdateOrder } from "./orders.dto";
 import { getUserDetails } from "src/common/methods";
@@ -12,14 +12,14 @@ export class OrdersService {
   async getOrders(
     query: FilterQueryParams,
     accessToken: string,
-    paginationParams: IPaginationParams,
+    paginationParams: IPaginationParams
     // ): Promise<[OrderEntity[], number]> {
   ): Promise<any> {
     const username = await getUserDetails(accessToken);
     return await this.orderRepository.fetchOrders(
       query,
       username,
-      paginationParams,
+      paginationParams
     );
   }
 
@@ -36,7 +36,7 @@ export class OrdersService {
   async updateOrder(
     id: string,
     body: UpdateOrder,
-    accessToken: string,
+    accessToken: string
   ): Promise<OrderEntity> {
     const username = await getUserDetails(accessToken);
     return await this.orderRepository.updateOrder(id, body, username);
@@ -44,9 +44,12 @@ export class OrdersService {
 
   async createOrder(
     body: CreateOrder,
-    accessToken: string,
+    accessToken: string
   ): Promise<OrderEntity> {
     const username = await getUserDetails(accessToken);
+    const { productIds, quantities } = body;
+    if (productIds.length !== quantities.length)
+      throw new BadRequestException("Quantities should be equal to Products");
     return await this.orderRepository.createOrder(body, username);
   }
 }

@@ -11,7 +11,9 @@ export class UserEntity extends DateEntity {
   @Column({ nullable: true })
   password: string;
 
-  @OneToMany(() => OrderEntity, (order) => order.user)
+  @OneToMany(() => OrderEntity, (order) => order.user, {
+    cascade: true,
+  })
   orders: OrderEntity[];
 
   @OneToMany(() => ProductEntity, (product) => product.user)

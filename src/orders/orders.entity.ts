@@ -21,8 +21,11 @@ export class OrderEntity extends DateEntity {
   @Column()
   status: IOrderStatus;
 
-  @Column()
-  quantity: number;
+  @Column("int", { array: true })
+  quantities: number[];
+
+  @Column("text", { array: true })
+  productIds: string[];
 
   @Column()
   userId: string;
@@ -31,7 +34,9 @@ export class OrderEntity extends DateEntity {
   @JoinColumn({ name: "userId" })
   user: UserEntity;
 
-  @ManyToMany(() => ProductEntity, (product) => product.orders)
+  @ManyToMany(() => ProductEntity, (product) => product.orders, {
+    cascade: true,
+  })
   @JoinTable({
     name: "order_product",
     joinColumn: {

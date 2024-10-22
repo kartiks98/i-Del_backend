@@ -13,11 +13,18 @@ export class OrderRepository extends Repository<OrderEntity> {
     super(OrderEntity, dataSource.createEntityManager());
   }
 
-  private getProductEntityInstancesFromIds(body: { productIds: string[] }) {
-    const { productIds } = body;
-    const productsEntities = productIds.map((productId) => {
+  private getProductEntityInstancesFromIds(
+    body: {
+      productIds: string[];
+      quantities: number[];
+    },
+    availableQuantity: number
+  ) {
+    const { productIds, quantities } = body;
+    const productsEntities = productIds.map((productId, i) => {
       const productEntity = new ProductEntity();
       productEntity.id = productId;
+      productEntity.availableQuantity = availableQuantity - quantities[i];
       return productEntity;
     });
     return productsEntities;
@@ -79,7 +86,9 @@ export class OrderRepository extends Repository<OrderEntity> {
   }
 
   async createOrder(body: CreateOrder, username: string) {
-    const products = this.getProductEntityInstancesFromIds(body);
+    const products = this.getProductEntityInstancesFromIds(body, 20);
+    console.log("products-INN", products);
+
     const order = this.create({
       ...body,
       products,
