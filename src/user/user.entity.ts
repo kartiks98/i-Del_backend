@@ -1,7 +1,15 @@
 import { DateEntity } from "src/common/entity";
 import { OrderEntity } from "src/orders/orders.entity";
 import { ProductEntity } from "src/product/product.entity";
-import { Column, Entity, OneToMany, PrimaryColumn } from "typeorm";
+import { ProfileEntity } from "src/profile/profile.entity";
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToMany,
+  OneToOne,
+  PrimaryColumn,
+} from "typeorm";
 
 @Entity("users")
 export class UserEntity extends DateEntity {
@@ -18,4 +26,7 @@ export class UserEntity extends DateEntity {
 
   @OneToMany(() => ProductEntity, (product) => product.user)
   products: ProductEntity[];
+
+  @OneToOne(() => ProfileEntity, (profile) => profile.user, { cascade: true })
+  profile: ProfileEntity;
 }

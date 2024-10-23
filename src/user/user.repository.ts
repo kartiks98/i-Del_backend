@@ -7,6 +7,7 @@ import {
 } from "@nestjs/common";
 import { getPaginationParams } from "src/common/methods";
 import { IPaginationParams } from "src/common/interface";
+import { ProfileEntity } from "src/profile/profile.entity";
 
 @Injectable()
 export class UserRepository extends Repository<UserEntity> {
@@ -23,12 +24,16 @@ export class UserRepository extends Repository<UserEntity> {
     hashedPassword?: string,
     redirectFn?: () => void,
   ): Promise<void> {
+    const profile = new ProfileEntity();
+    profile.name = username;
+    profile.isSubscribed = false;
     const user = this.create({
       username,
       password: hashedPassword,
+      profile,
     });
     try {
-      await this.insert(user);
+      await this.save(user);
     } catch (er) {
       console.log("errrr", er);
 
