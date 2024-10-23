@@ -27,7 +27,7 @@ export class ProductRepository extends Repository<ProductEntity> {
   async fetchProducts(
     username: string,
     query: SearchFilter,
-    paginationParams: IPaginationParams
+    paginationParams: IPaginationParams,
   ) {
     const { search } = query;
 
@@ -45,7 +45,7 @@ export class ProductRepository extends Repository<ProductEntity> {
         "(product.name ILIKE :search OR product.description ILIKE :search)",
         {
           search: `%${search}%`,
-        }
+        },
       );
 
     return await dbQuery.getManyAndCount();

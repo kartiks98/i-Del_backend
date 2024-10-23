@@ -31,7 +31,10 @@ export class ProductEntity extends DateEntity {
   @JoinColumn({ name: "userId" })
   user: UserEntity;
 
-  @ManyToMany(() => OrderEntity, (order) => order.products)
+  @ManyToMany(() => OrderEntity, (order) => order.products, {
+    cascade: true,
+    onDelete: "CASCADE",
+  })
   orders?: OrderEntity[];
 
   // @ManyToOne(() => OrderEntity, (order) => order.products)

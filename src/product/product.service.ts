@@ -17,13 +17,13 @@ export class ProductService {
   async getProducts(
     accessToken: string,
     query: SearchFilter,
-    paginationParams: IPaginationParams
+    paginationParams: IPaginationParams,
   ) {
     const username = await getUserDetails(accessToken);
     return await this.productRepository.fetchProducts(
       username,
       query,
-      paginationParams
+      paginationParams,
     );
   }
 

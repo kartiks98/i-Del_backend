@@ -26,12 +26,6 @@ export class CreateOrder {
 
 export class UpdateOrder {
   @IsOptional()
-  @IsArray()
-  @IsInt({ each: true })
-  @Min(1, { each: true })
-  quantities: number[];
-
-  @IsOptional()
   @IsEnum(IOrderStatus, {
     message: orderStatusErrorMessage,
   })

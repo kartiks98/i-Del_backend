@@ -34,9 +34,7 @@ export class OrderEntity extends DateEntity {
   @JoinColumn({ name: "userId" })
   user: UserEntity;
 
-  @ManyToMany(() => ProductEntity, (product) => product.orders, {
-    cascade: true,
-  })
+  @ManyToMany(() => ProductEntity, (product) => product.orders)
   @JoinTable({
     name: "order_product",
     joinColumn: {
