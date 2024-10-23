@@ -18,13 +18,13 @@ export class OrderRepository extends Repository<OrderEntity> {
       productIds: string[];
       quantities: number[];
     },
-    availableQuantity: number
+    availableQuantities: number[]
   ) {
     const { productIds, quantities } = body;
     const productsEntities = productIds.map((productId, i) => {
       const productEntity = new ProductEntity();
       productEntity.id = productId;
-      productEntity.availableQuantity = availableQuantity - quantities[i];
+      productEntity.availableQuantity = availableQuantities[i] - quantities[i];
       return productEntity;
     });
     return productsEntities;
@@ -85,10 +85,15 @@ export class OrderRepository extends Repository<OrderEntity> {
     return updatedOrder.raw;
   }
 
-  async createOrder(body: CreateOrder, username: string) {
-    const products = this.getProductEntityInstancesFromIds(body, 20);
-    console.log("products-INN", products);
-
+  async createOrder(
+    body: CreateOrder,
+    username: string,
+    availableQuantities: number[]
+  ) {
+    const products = this.getProductEntityInstancesFromIds(
+      body,
+      availableQuantities
+    );
     const order = this.create({
       ...body,
       products,

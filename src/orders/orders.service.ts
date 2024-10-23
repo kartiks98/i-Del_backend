@@ -4,10 +4,15 @@ import { CreateOrder, FilterQueryParams, UpdateOrder } from "./orders.dto";
 import { getUserDetails } from "src/common/methods";
 import { IPaginationParams } from "src/common/interface";
 import { OrderEntity } from "./orders.entity";
+import { ProductService } from "src/product/product.service";
+import { ProductEntity } from "src/product/product.entity";
 
 @Injectable()
 export class OrdersService {
-  constructor(private orderRepository: OrderRepository) {}
+  constructor(
+    private orderRepository: OrderRepository,
+    private productService: ProductService
+  ) {}
 
   async getOrders(
     query: FilterQueryParams,
@@ -46,10 +51,29 @@ export class OrdersService {
     body: CreateOrder,
     accessToken: string
   ): Promise<OrderEntity> {
-    const username = await getUserDetails(accessToken);
     const { productIds, quantities } = body;
+    const products = await this.productService.getProductInfo(
+      accessToken,
+      productIds
+    );
+    const availableQuantities = products.map(
+      ({ availableQuantity }, i: number) => {
+        if (quantities[i] > availableQuantity)
+          throw new BadRequestException(
+            "Requested quantity for the product not available"
+          );
+        return availableQuantity;
+      }
+    );
     if (productIds.length !== quantities.length)
       throw new BadRequestException("Quantities should be equal to Products");
-    return await this.orderRepository.createOrder(body, username);
+
+    const username = await getUserDetails(accessToken);
+
+    return await this.orderRepository.createOrder(
+      body,
+      username,
+      availableQuantities
+    );
   }
 }

@@ -40,8 +40,11 @@ export class ProductController {
   }
 
   @Get(":id")
-  getProductnfo(@Headers() headers: IHeaders, @Param("id") id: string) {
-    return this.productService.getProductnfo(headers.authorization, id);
+  getProductnfo(
+    @Headers() headers: IHeaders,
+    @Param("id") ids: string | string[],
+  ) {
+    return this.productService.getProductInfo(headers.authorization, ids);
   }
 
   @Patch(":id")

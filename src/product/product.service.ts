@@ -3,6 +3,7 @@ import { ProductRepository } from "./product.repository";
 import { CreateProduct, SearchFilter, UpdateProduct } from "./product.dto";
 import { IPaginationParams } from "src/common/interface";
 import { getUserDetails } from "src/common/methods";
+import { ProductEntity } from "./product.entity";
 
 @Injectable()
 export class ProductService {
@@ -16,19 +17,19 @@ export class ProductService {
   async getProducts(
     accessToken: string,
     query: SearchFilter,
-    paginationParams: IPaginationParams,
+    paginationParams: IPaginationParams
   ) {
     const username = await getUserDetails(accessToken);
     return await this.productRepository.fetchProducts(
       username,
       query,
-      paginationParams,
+      paginationParams
     );
   }
 
-  async getProductnfo(accessToken: string, id: string) {
+  async getProductInfo(accessToken: string, ids: string | string[]) {
     const username = await getUserDetails(accessToken);
-    return await this.productRepository.fetchProductInfo(username, id);
+    return await this.productRepository.fetchProductInfo(username, ids);
   }
 
   async updateProduct(accessToken: string, id: string, body: UpdateProduct) {

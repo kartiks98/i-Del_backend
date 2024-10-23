@@ -1,5 +1,9 @@
-import { DataSource, Repository } from "typeorm";
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { DataSource, In, Repository } from "typeorm";
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from "@nestjs/common";
 import { ProductEntity } from "./product.entity";
 import { CreateProduct, SearchFilter, UpdateProduct } from "./product.dto";
 import { IPaginationParams } from "src/common/interface";
@@ -23,7 +27,7 @@ export class ProductRepository extends Repository<ProductEntity> {
   async fetchProducts(
     username: string,
     query: SearchFilter,
-    paginationParams: IPaginationParams,
+    paginationParams: IPaginationParams
   ) {
     const { search } = query;
 
@@ -41,14 +45,21 @@ export class ProductRepository extends Repository<ProductEntity> {
         "(product.name ILIKE :search OR product.description ILIKE :search)",
         {
           search: `%${search}%`,
-        },
+        }
       );
 
     return await dbQuery.getManyAndCount();
   }
 
-  async fetchProductInfo(username: string, id: string) {
-    const foundProduct = await this.findOneBy({ id, userId: username });
+  async fetchProductInfo(username: string, ids: string | string[]) {
+    let foundProduct: any = {};
+    if (!Array.isArray(ids))
+      foundProduct = await this.findOneBy({ id: ids, userId: username });
+    else {
+      foundProduct = await this.findBy({ id: In(ids) });
+      if (foundProduct.length !== ids.length)
+        throw new BadRequestException("Invalid Product IDs");
+    }
     if (!foundProduct) {
       throw new NotFoundException("Requested ID Not Found");
     }
