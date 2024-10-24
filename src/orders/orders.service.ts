@@ -1,7 +1,6 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { OrderRepository } from "./orders.repository";
 import { CreateOrder, FilterQueryParams, UpdateOrder } from "./orders.dto";
-import { getUserDetails } from "src/common/methods";
 import { IPaginationParams } from "src/common/interface";
 import { OrderEntity } from "./orders.entity";
 import { ProductService } from "src/product/product.service";
@@ -15,11 +14,10 @@ export class OrdersService {
 
   async getOrders(
     query: FilterQueryParams,
-    accessToken: string,
+    username: string,
     paginationParams: IPaginationParams,
     // ): Promise<[OrderEntity[], number]> {
   ): Promise<any> {
-    const username = await getUserDetails(accessToken);
     return await this.orderRepository.fetchOrders(
       query,
       username,
@@ -27,33 +25,27 @@ export class OrdersService {
     );
   }
 
-  async getOrderInfo(id: string, accessToken: string): Promise<OrderEntity> {
-    const username = await getUserDetails(accessToken);
+  async getOrderInfo(id: string, username: string): Promise<OrderEntity> {
     return await this.orderRepository.fetchOrderInfo(id, username);
   }
 
-  async deleteOrder(id: string, accessToken: string): Promise<OrderEntity> {
-    const username = await getUserDetails(accessToken);
+  async deleteOrder(id: string, username: string): Promise<OrderEntity> {
     return await this.orderRepository.deleteOrder(id, username);
   }
 
   async updateOrder(
     id: string,
     body: UpdateOrder,
-    accessToken: string,
+    username: string,
   ): Promise<OrderEntity> {
-    const username = await getUserDetails(accessToken);
     return await this.orderRepository.updateOrder(id, body, username);
   }
 
-  async createOrder(
-    body: CreateOrder,
-    accessToken: string,
-  ): Promise<OrderEntity> {
+  async createOrder(body: CreateOrder, username: string): Promise<OrderEntity> {
     // productIds & quantities validations
     const { productIds, quantities } = body;
     const products = await this.productService.getProductInfo(
-      accessToken,
+      username,
       productIds,
     );
     const availableQuantities = products.map(
@@ -68,7 +60,6 @@ export class OrdersService {
     if (productIds.length !== quantities.length)
       throw new BadRequestException("Quantities should be equal to Products");
 
-    const username = await getUserDetails(accessToken);
     return await this.orderRepository.createOrder(
       body,
       username,

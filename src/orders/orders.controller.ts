@@ -3,7 +3,6 @@ import {
   Controller,
   Delete,
   Get,
-  Headers,
   Param,
   Patch,
   Post,
@@ -12,8 +11,8 @@ import {
 } from "@nestjs/common";
 import { OrdersService } from "./orders.service";
 import { CreateOrder, FilterQueryParams, UpdateOrder } from "./orders.dto";
-import { IHeaders, IPaginationParams } from "src/common/interface";
-import { PaginationParamsDecorator } from "src/common/decorators";
+import { IPaginationParams } from "src/common/interface";
+import { PaginationParamsDecorator, Username } from "src/common/decorators";
 import { OrderEntity } from "./orders.entity";
 import { AnyAuthGuard } from "src/common/anyAuth.guard";
 
@@ -24,47 +23,43 @@ export class TasksController {
 
   @Get(":limit/:pageNumber")
   getOrders(
-    @Headers() headers: IHeaders,
+    @Username() username: string,
     @Query() query: FilterQueryParams,
     @PaginationParamsDecorator() paginationParams: IPaginationParams,
   ): Promise<[OrderEntity[], number]> {
-    return this.ordersService.getOrders(
-      query,
-      headers.authorization,
-      paginationParams,
-    );
+    return this.ordersService.getOrders(query, username, paginationParams);
   }
 
   @Get("/:id")
   getOrderInfo(
-    @Headers() headers: IHeaders,
+    @Username() username: string,
     @Param("id") id: string,
   ): Promise<OrderEntity> {
-    return this.ordersService.getOrderInfo(id, headers.authorization);
+    return this.ordersService.getOrderInfo(id, username);
   }
 
   @Delete("/:id")
   deleteOrder(
-    @Headers() headers: IHeaders,
+    @Username() username: string,
     @Param("id") id: string,
   ): Promise<OrderEntity> {
-    return this.ordersService.deleteOrder(id, headers.authorization);
+    return this.ordersService.deleteOrder(id, username);
   }
 
   @Patch("/:id")
   updateOrder(
-    @Headers() headers: IHeaders,
+    @Username() username: string,
     @Param("id") id: string,
     @Body() body: UpdateOrder,
   ): Promise<OrderEntity> {
-    return this.ordersService.updateOrder(id, body, headers.authorization);
+    return this.ordersService.updateOrder(id, body, username);
   }
 
   @Post("/create-order")
   createOrder(
-    @Headers() headers: IHeaders,
+    @Username() username: string,
     @Body() body: CreateOrder,
   ): Promise<OrderEntity> {
-    return this.ordersService.createOrder(body, headers.authorization);
+    return this.ordersService.createOrder(body, username);
   }
 }

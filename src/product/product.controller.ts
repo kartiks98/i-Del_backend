@@ -7,13 +7,12 @@ import {
   Param,
   Delete,
   Query,
-  Headers,
   UseGuards,
 } from "@nestjs/common";
 import { ProductService } from "./product.service";
 import { CreateProduct, SearchFilter, UpdateProduct } from "./product.dto";
-import { IHeaders, IPaginationParams } from "src/common/interface";
-import { PaginationParamsDecorator } from "src/common/decorators";
+import { IPaginationParams } from "src/common/interface";
+import { PaginationParamsDecorator, Username } from "src/common/decorators";
 import { AnyAuthGuard } from "src/common/anyAuth.guard";
 
 @Controller("products")
@@ -22,42 +21,38 @@ export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
   @Post("/add-product")
-  addProduct(@Headers() headers: IHeaders, @Body() body: CreateProduct) {
-    return this.productService.addProduct(headers.authorization, body);
+  addProduct(@Username() username: string, @Body() body: CreateProduct) {
+    return this.productService.addProduct(username, body);
   }
 
   @Get(":limit/:pageNumber")
   getProducts(
-    @Headers() headers: IHeaders,
+    @Username() username: string,
     @Query() query: SearchFilter,
     @PaginationParamsDecorator() paginationParams: IPaginationParams,
   ) {
-    return this.productService.getProducts(
-      headers.authorization,
-      query,
-      paginationParams,
-    );
+    return this.productService.getProducts(username, query, paginationParams);
   }
 
   @Get(":id")
   getProductnfo(
-    @Headers() headers: IHeaders,
+    @Username() username: string,
     @Param("id") ids: string | string[],
   ) {
-    return this.productService.getProductInfo(headers.authorization, ids);
+    return this.productService.getProductInfo(username, ids);
   }
 
   @Patch(":id")
   updateProduct(
-    @Headers() headers: IHeaders,
+    @Username() username: string,
     @Param("id") id: string,
     @Body() body: UpdateProduct,
   ) {
-    return this.productService.updateProduct(headers.authorization, id, body);
+    return this.productService.updateProduct(username, id, body);
   }
 
   @Delete(":id")
-  removeProduct(@Headers() headers: IHeaders, @Param("id") id: string) {
-    return this.productService.removeProduct(headers.authorization, id);
+  removeProduct(@Username() username: string, @Param("id") id: string) {
+    return this.productService.removeProduct(username, id);
   }
 }
