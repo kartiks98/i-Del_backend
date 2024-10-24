@@ -22,7 +22,7 @@ export class UserRepository extends Repository<UserEntity> {
   async createUser(
     username: string,
     hashedPassword?: string,
-    redirectFn?: () => void,
+    redirectFn?: () => void
   ): Promise<void> {
     const profile = new ProfileEntity();
     profile.name = username;
@@ -38,6 +38,7 @@ export class UserRepository extends Repository<UserEntity> {
       console.log("errrr", er);
 
       if (er.code === "23505") {
+        // don't throw ConflictException if signInWithGoogle
         if (!redirectFn) throw new ConflictException("Username Already Exists");
       } else throw new InternalServerErrorException();
     } finally {
@@ -46,7 +47,7 @@ export class UserRepository extends Repository<UserEntity> {
   }
 
   async fetchUsers(
-    paginationParams: IPaginationParams,
+    paginationParams: IPaginationParams
   ): Promise<[UserEntity[], number]> {
     return await this.findAndCount({
       select: { username: true },
