@@ -5,6 +5,7 @@ import { ConfigModule, ConfigService } from "@nestjs/config";
 import { UserModule } from "./user/user.module";
 import { ProfileModule } from "./profile/profile.module";
 import { ProductModule } from "./product/product.module";
+import { CartModule } from "./cart/cart.module";
 import dbConfig from "config/db.config";
 import miscConfig from "config/misc.config";
 
@@ -37,6 +38,7 @@ const migrationEnvironments = ["prod", "uat"];
     UserModule,
     ProfileModule,
     ProductModule,
+    CartModule,
   ],
 })
 export class AppModule {}

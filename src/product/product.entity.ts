@@ -1,3 +1,4 @@
+import { CartEntity } from "src/cart/cart.entity";
 import { DateEntity } from "src/common/entity";
 import { OrderEntity } from "src/orders/orders.entity";
 import { UserEntity } from "src/user/user.entity";
@@ -27,6 +28,9 @@ export class ProductEntity extends DateEntity {
   @Column()
   userId: string;
 
+  @Column({ nullable: true })
+  isSelected: boolean;
+
   @ManyToOne(() => UserEntity, (user) => user.products)
   @JoinColumn({ name: "userId" })
   user: UserEntity;
@@ -36,6 +40,9 @@ export class ProductEntity extends DateEntity {
     onDelete: "CASCADE",
   })
   orders?: OrderEntity[];
+
+  @ManyToMany(() => CartEntity, (cart) => cart.products)
+  carts: CartEntity[];
 
   // @ManyToOne(() => OrderEntity, (order) => order.products)
   // @JoinColumn({ name: "orderId" })
