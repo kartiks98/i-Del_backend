@@ -1,4 +1,3 @@
-import { CartEntity } from "src/cart/cart.entity";
 import { DateEntity } from "src/common/entity";
 import { OrderEntity } from "src/orders/orders.entity";
 import { UserEntity } from "src/user/user.entity";

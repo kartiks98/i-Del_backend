@@ -1,4 +1,4 @@
-import { CartEntity } from "src/cart/cart.entity";
+import { CartItemEntity } from "src/cart-item/cart-item.entity";
 import { DateEntity } from "src/common/entity";
 import { OrderEntity } from "src/orders/orders.entity";
 import { ProductEntity } from "src/product/product.entity";
@@ -28,8 +28,8 @@ export class UserEntity extends DateEntity {
   @OneToMany(() => ProductEntity, (product) => product.user)
   products: ProductEntity[];
 
-  @OneToMany(() => CartEntity, (cart) => cart.user)
-  cart: CartEntity;
+  @OneToMany(() => CartItemEntity, (cartItem) => cartItem.user)
+  cartItems: CartItemEntity[];
 
   @OneToOne(() => ProfileEntity, (profile) => profile.user, { cascade: true })
   profile: ProfileEntity;

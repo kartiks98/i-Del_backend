@@ -1,26 +1,20 @@
 import { Injectable } from "@nestjs/common";
-import { CreateCartItemDto } from "./cart-item.dto";
-import { UpdateCartItemDto } from "./dto/update-cart-item.dto";
+import { UpdateCartItem } from "./cart-item.dto";
+import { CartItemRepository } from "./cart-item.repository";
 
 @Injectable()
 export class CartItemService {
-  create(createCartItemDto: CreateCartItemDto) {
-    return "This action adds a new cartItem";
-  }
+  constructor(private cartItemRepository: CartItemRepository) {}
 
-  findAll() {
+  async getCartItems() {
     return `This action returns all cartItem`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} cartItem`;
+  async updateCartItem(id: string, body: UpdateCartItem, username: string) {
+    return await this.cartItemRepository.updateCartItem(id, body, username);
   }
 
-  update(id: number, updateCartItemDto: UpdateCartItemDto) {
-    return `This action updates a #${id} cartItem`;
-  }
-
-  remove(id: number) {
+  async removeCartItem(id: string) {
     return `This action removes a #${id} cartItem`;
   }
 }

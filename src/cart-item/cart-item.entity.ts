@@ -1,4 +1,4 @@
-import { CartEntity } from "src/cart/cart.entity";
+import { UserEntity } from "src/user/user.entity";
 import {
   Column,
   Entity,
@@ -22,9 +22,9 @@ export class CartItemEntity {
   isSelected: boolean;
 
   @Column()
-  cartId: string;
+  userId: string;
 
-  @ManyToOne(() => CartEntity, (cart) => cart.cartItems)
-  @JoinColumn({ name: "cartId" })
-  cart: CartEntity;
+  @ManyToOne(() => UserEntity, (user) => user.cartItems)
+  @JoinColumn({ name: "userId" })
+  user: UserEntity;
 }
