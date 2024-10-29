@@ -25,17 +25,8 @@ export class CartItemController {
     return this.cartItemService.updateCartItem(id, body, username);
   }
 
-  @Patch("/increase-quantity/:id")
+  @Patch("/update-quantity/:id")
   increaseCartItemQuantityByN(
-    @Param("id") id: string,
-    @Body() body: UpdateQuantityByN,
-    @Username() username: string
-  ) {
-    return this.cartItemService.updateCartItemQuantityByN(id, body, username);
-  }
-
-  @Patch("/decrease-quantity/:id")
-  decreaseCartItemQuantityByN(
     @Param("id") id: string,
     @Body() body: UpdateQuantityByN,
     @Username() username: string

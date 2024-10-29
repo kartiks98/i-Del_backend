@@ -48,15 +48,16 @@ export class CartItemService {
     const updatedQuantity = isAdd
       ? quantity + quantityToUpdate
       : quantity - quantityToUpdate;
-    if (isAdd)
+
+    if (isAdd) {
       if (updatedQuantity > availableQuantity)
         throw new BadRequestException(
           "Requested quantity for the product not available"
         );
-      else if (updatedQuantity >= 0)
-        throw new BadRequestException(
-          "Requested quantity for the product not available"
-        );
+    } else if (updatedQuantity < 0)
+      throw new BadRequestException(
+        "Requested quantity for the product not available"
+      );
 
     return await this.cartItemRepository.updateCartItemQuantityByN(
       id,
