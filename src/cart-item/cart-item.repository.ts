@@ -34,7 +34,7 @@ export class CartItemRepository extends Repository<CartItemEntity> {
   async updateCartItem(id: string, body: UpdateCartItem, username: string) {
     const updatedCartItem = await this.upsert(
       { ...body, productId: id, userId: username },
-      ["productId"]
+      ["productId"],
     );
     return updatedCartItem.raw;
   }
@@ -42,11 +42,11 @@ export class CartItemRepository extends Repository<CartItemEntity> {
   async updateCartItemQuantityByN(
     id: string,
     updatedQuantity: number,
-    username: string
+    username: string,
   ) {
     const updatedOrder = await this.update(
       { productId: id, userId: username },
-      { quantity: updatedQuantity }
+      { quantity: updatedQuantity },
     );
     if (updatedOrder.affected === 0)
       throw new NotFoundException("Requested ID Not Found");

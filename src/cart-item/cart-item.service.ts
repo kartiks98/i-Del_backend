@@ -8,13 +8,13 @@ import { IPaginationParams } from "src/common/interface";
 export class CartItemService {
   constructor(
     private cartItemRepository: CartItemRepository,
-    private productService: ProductService
+    private productService: ProductService,
   ) {}
 
   async getCartItems(username: string, paginationParams: IPaginationParams) {
     return await this.cartItemRepository.getCartItems(
       username,
-      paginationParams
+      paginationParams,
     );
   }
 
@@ -22,11 +22,11 @@ export class CartItemService {
     const { productId, quantity } = body;
     const { availableQuantity } = await this.productService.getProductInfo(
       username,
-      productId
+      productId,
     );
     if (quantity > availableQuantity)
       throw new BadRequestException(
-        "Requested quantity for the product not available"
+        "Requested quantity for the product not available",
       );
     return await this.cartItemRepository.updateCartItem(id, body, username);
   }
@@ -34,16 +34,16 @@ export class CartItemService {
   async updateCartItemQuantityByN(
     id: string,
     body: UpdateQuantityByN,
-    username: string
+    username: string,
   ) {
     const { quantityToUpdate, productId, isAdd } = body;
     const { availableQuantity } = await this.productService.getProductInfo(
       username,
-      productId
+      productId,
     );
     const { quantity } = await this.cartItemRepository.getCartItem(
       id,
-      username
+      username,
     );
     const updatedQuantity = isAdd
       ? quantity + quantityToUpdate
@@ -52,17 +52,17 @@ export class CartItemService {
     if (isAdd) {
       if (updatedQuantity > availableQuantity)
         throw new BadRequestException(
-          "Requested quantity for the product not available"
+          "Requested quantity for the product not available",
         );
     } else if (updatedQuantity < 0)
       throw new BadRequestException(
-        "Requested quantity for the product not available"
+        "Requested quantity for the product not available",
       );
 
     return await this.cartItemRepository.updateCartItemQuantityByN(
       id,
       updatedQuantity,
-      username
+      username,
     );
   }
 
