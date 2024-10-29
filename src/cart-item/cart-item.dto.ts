@@ -14,10 +14,25 @@ export class UpdateCartItem {
   quantity: number;
 
   @IsNotEmpty()
-  @IsString() // "each" tells class-validator to run the validation on each item of the array
+  @IsString()
   productId: string;
 
   @IsOptional()
   @IsBoolean()
   isSelected: boolean;
+}
+
+export class UpdateQuantityByN {
+  @IsNotEmpty()
+  @IsInt()
+  @Min(1)
+  quantityToUpdate: number;
+
+  @IsNotEmpty()
+  @IsString()
+  productId: string;
+
+  @IsNotEmpty()
+  @IsBoolean()
+  isAdd: boolean;
 }
