@@ -11,7 +11,7 @@ export class CartItemController {
   @Get("/list/:limit/:pageNumber")
   getCartItems(
     @Username() Username,
-    @PaginationParamsDecorator() paginationParams: IPaginationParams,
+    @PaginationParamsDecorator() paginationParams: IPaginationParams
   ) {
     return this.cartItemService.getCartItems(Username, paginationParams);
   }
@@ -20,7 +20,7 @@ export class CartItemController {
   updateCartItem(
     @Param("id") id: string,
     @Body() body: UpdateCartItem,
-    @Username() username,
+    @Username() username
   ) {
     return this.cartItemService.updateCartItem(id, body, username);
   }
@@ -29,9 +29,14 @@ export class CartItemController {
   increaseCartItemQuantityByN(
     @Param("id") id: string,
     @Body() body: UpdateQuantityByN,
-    @Username() username: string,
+    @Username() username: string
   ) {
     return this.cartItemService.updateCartItemQuantityByN(id, body, username);
+  }
+
+  @Patch("/toggle-item-select/:id")
+  toggleCartItemSelect(@Param("id") id: string, @Username() username: string) {
+    return this.cartItemService.toggleCartItemSelect(id, username);
   }
 
   @Delete(":id")

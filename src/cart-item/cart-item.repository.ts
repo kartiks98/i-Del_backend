@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { DataSource, Repository } from "typeorm";
 import { CartItemEntity } from "./cart-item.entity";
-import { UpdateCartItem, UpdateQuantityByN } from "./cart-item.dto";
+import { UpdateCartItem } from "./cart-item.dto";
 import { IPaginationParams } from "src/common/interface";
 import { getPaginationParams } from "src/common/methods";
 
@@ -34,7 +34,7 @@ export class CartItemRepository extends Repository<CartItemEntity> {
   async updateCartItem(id: string, body: UpdateCartItem, username: string) {
     const updatedCartItem = await this.upsert(
       { ...body, productId: id, userId: username },
-      ["productId"],
+      ["productId"]
     );
     return updatedCartItem.raw;
   }
@@ -42,11 +42,21 @@ export class CartItemRepository extends Repository<CartItemEntity> {
   async updateCartItemQuantityByN(
     id: string,
     updatedQuantity: number,
-    username: string,
+    username: string
   ) {
     const updatedOrder = await this.update(
       { productId: id, userId: username },
-      { quantity: updatedQuantity },
+      { quantity: updatedQuantity }
+    );
+    if (updatedOrder.affected === 0)
+      throw new NotFoundException("Requested ID Not Found");
+    return updatedOrder.raw;
+  }
+
+  async toggleCartItemSelect(id: string, username: string) {
+    const updatedOrder = await this.update(
+      { productId: id, userId: username },
+      { isSelected: () => "NOT isSelected" }
     );
     if (updatedOrder.affected === 0)
       throw new NotFoundException("Requested ID Not Found");
