@@ -41,9 +41,6 @@ export class ProductEntity extends DateEntity {
   })
   orders?: OrderEntity[];
 
-  @ManyToMany(() => CartEntity, (cart) => cart.products)
-  carts: CartEntity[];
-
   // @ManyToOne(() => OrderEntity, (order) => order.products)
   // @JoinColumn({ name: "orderId" })
   // order?: OrderEntity;

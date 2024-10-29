@@ -21,17 +21,12 @@ export class CartController {
   }
 
   @Get()
-  findAll() {
-    return this.cartService.findAll();
-  }
-
-  @Patch(":id")
-  update(@Param("id") id: string, @Body() updateCartItem: UpdateCartItem) {
-    return this.cartService.update(id, updateCartItem);
+  getCarts() {
+    return this.cartService.getCarts();
   }
 
   @Delete(":id")
-  remove(@Param("id") id: string) {
-    return this.cartService.remove(id);
+  deleteCart(@Param("id") id: string) {
+    return this.cartService.deleteCart(id);
   }
 }

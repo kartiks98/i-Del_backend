@@ -1,13 +1,12 @@
+import { CartItemEntity } from "src/cart-item/cart-item.entity";
 import { ProductEntity } from "src/product/product.entity";
 import { UserEntity } from "src/user/user.entity";
 import {
   Column,
   Entity,
   JoinColumn,
-  JoinTable,
-  ManyToMany,
   ManyToOne,
-  OneToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
 
@@ -23,17 +22,6 @@ export class CartEntity {
   @JoinColumn({ name: "userId" })
   user: UserEntity;
 
-  @ManyToMany(() => ProductEntity, (product) => product.carts)
-  @JoinTable({
-    name: "cart_product",
-    joinColumn: {
-      name: "cartId",
-      referencedColumnName: "id",
-    },
-    inverseJoinColumn: {
-      name: "productId",
-      referencedColumnName: "id",
-    },
-  })
-  products: ProductEntity[];
+  @OneToMany(() => CartItemEntity, (cartItem) => cartItem.cart)
+  cartItems: CartItemEntity[];
 }
