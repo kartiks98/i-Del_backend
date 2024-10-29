@@ -1,4 +1,5 @@
 import {
+  ArrayMinSize,
   IsArray,
   IsEnum,
   IsInt,
@@ -14,12 +15,14 @@ const orderStatusErrorMessage = `Status could only be one of the following : ${O
 export class CreateOrder {
   @IsNotEmpty()
   @IsArray()
+  @ArrayMinSize(1)
   @IsInt({ each: true })
   @Min(1, { each: true })
   quantities: number[];
 
   @IsNotEmpty()
   @IsArray()
+  @ArrayMinSize(1)
   @IsString({ each: true }) // "each" tells class-validator to run the validation on each item of the array
   productIds: string[];
 }
