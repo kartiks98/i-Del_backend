@@ -7,18 +7,18 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm";
 
-@Entity("CartItem")
+@Entity("cart-item")
 export class CartItemEntity {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @Column()
+  @Column({ unique: true })
   productId: string;
 
   @Column()
   quantity: number;
 
-  @Column()
+  @Column({ default: true })
   isSelected: boolean;
 
   @Column()

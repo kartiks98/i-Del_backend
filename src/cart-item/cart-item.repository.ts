@@ -29,7 +29,10 @@ export class CartItemRepository extends Repository<CartItemEntity> {
   }
 
   async removeCartItem(id: string, username: string) {
-    const deletedCartItem = await this.delete({ id, userId: username });
+    const deletedCartItem = await this.delete({
+      productId: id,
+      userId: username,
+    });
     if (deletedCartItem.affected === 0)
       throw new NotFoundException("Requested ID Not Found");
     return deletedCartItem.raw;
