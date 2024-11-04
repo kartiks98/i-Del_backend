@@ -3,6 +3,7 @@ import { UpdateCartItem, UpdateQuantityByN } from "./cart-item.dto";
 import { CartItemRepository } from "./cart-item.repository";
 import { ProductService } from "src/product/product.service";
 import { IPaginationParams } from "src/common/interface";
+import { REQ_QNTY_NOT_AVAIL_MSG } from "src/common/constants";
 
 @Injectable()
 export class CartItemService {
@@ -25,9 +26,7 @@ export class CartItemService {
       productId,
     );
     if (quantity > availableQuantity)
-      throw new BadRequestException(
-        "Requested quantity for the product not available",
-      );
+      throw new BadRequestException(REQ_QNTY_NOT_AVAIL_MSG);
     return await this.cartItemRepository.updateCartItem(id, body, username);
   }
 
@@ -51,13 +50,9 @@ export class CartItemService {
 
     if (isAdd) {
       if (updatedQuantity > availableQuantity)
-        throw new BadRequestException(
-          "Requested quantity for the product not available",
-        );
+        throw new BadRequestException(REQ_QNTY_NOT_AVAIL_MSG);
     } else if (updatedQuantity < 0)
-      throw new BadRequestException(
-        "Requested quantity for the product not available",
-      );
+      throw new BadRequestException(REQ_QNTY_NOT_AVAIL_MSG);
 
     return await this.cartItemRepository.updateCartItemQuantityByN(
       id,

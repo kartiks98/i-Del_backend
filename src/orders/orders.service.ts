@@ -4,6 +4,7 @@ import { CreateOrder, FilterQueryParams, UpdateOrder } from "./orders.dto";
 import { IPaginationParams } from "src/common/interface";
 import { OrderEntity } from "./orders.entity";
 import { ProductService } from "src/product/product.service";
+import { REQ_QNTY_NOT_AVAIL_MSG } from "src/common/constants";
 
 @Injectable()
 export class OrdersService {
@@ -51,9 +52,7 @@ export class OrdersService {
     const availableQuantities = products.map(
       ({ availableQuantity }, i: number) => {
         if (quantities[i] > availableQuantity)
-          throw new BadRequestException(
-            "Requested quantity for the product not available",
-          );
+          throw new BadRequestException(REQ_QNTY_NOT_AVAIL_MSG);
         return availableQuantity;
       },
     );
