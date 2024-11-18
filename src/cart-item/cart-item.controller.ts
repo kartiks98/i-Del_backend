@@ -1,10 +1,20 @@
-import { Controller, Get, Body, Patch, Param, Delete } from "@nestjs/common";
+import {
+  Controller,
+  Get,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+} from "@nestjs/common";
 import { CartItemService } from "./cart-item.service";
 import { UpdateCartItem, UpdateQuantityByN } from "./cart-item.dto";
 import { PaginationParamsDecorator, Username } from "src/common/decorators";
 import { IPaginationParams } from "src/common/interface";
+import { AnyAuthGuard } from "src/common/anyAuth.guard";
 
 @Controller("cart-item")
+@UseGuards(AnyAuthGuard)
 export class CartItemController {
   constructor(private readonly cartItemService: CartItemService) {}
 
