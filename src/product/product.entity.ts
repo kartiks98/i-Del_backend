@@ -1,3 +1,4 @@
+import { CategoryEntity } from "src/categories/categories.entity";
 import { DateEntity } from "src/common/entity";
 import { OrderEntity } from "src/orders/orders.entity";
 import { UserEntity } from "src/user/user.entity";
@@ -39,6 +40,12 @@ export class ProductEntity extends DateEntity {
     onDelete: "CASCADE",
   })
   orders?: OrderEntity[];
+
+  @ManyToMany(() => CategoryEntity, (category) => category.products, {
+    cascade: true,
+    onDelete: "CASCADE",
+  })
+  categories?: CategoryEntity[];
 
   // @ManyToOne(() => OrderEntity, (order) => order.products)
   // @JoinColumn({ name: "orderId" })
