@@ -7,38 +7,40 @@ import {
   Param,
   Delete,
   UseGuards,
+  Query,
 } from "@nestjs/common";
 import { CategoriesService } from "./categories.service";
 import { AddCategory, RenameCategory } from "./categories.dto";
-import { PaginationParamsDecorator, Username } from "src/common/decorators";
+import { PaginationParamsDecorator } from "src/common/decorators";
 import { IPaginationParams } from "src/common/interface";
 import { AnyAuthGuard } from "src/common/anyAuth.guard";
+import { SearchFilter } from "src/product/product.dto";
 
 @Controller("categories")
 @UseGuards(AnyAuthGuard)
 export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
-  @Post()
+  @Post("/add")
   create(@Body() body: AddCategory) {
     return this.categoriesService.addCategory(body);
   }
 
-  @Get("/list/:limit/:pageNumber")
+  @Get("/:limit/:pageNumber")
   getCategories(
-    @Username() username,
+    @Query() query: SearchFilter,
     @PaginationParamsDecorator() paginationParams: IPaginationParams
   ) {
-    return this.categoriesService.getCategories();
+    return this.categoriesService.getCategories(query, paginationParams);
   }
 
-  @Patch(":id")
-  update(@Param("id") id: string, @Body() body: RenameCategory) {
-    return this.categoriesService.renameCategory(id, body);
+  @Patch(":name")
+  update(@Body() body: RenameCategory) {
+    return this.categoriesService.renameCategory(body);
   }
 
-  @Delete(":id")
-  remove(@Param("id") id: string) {
-    return this.categoriesService.removeCategory(id);
+  @Delete(":name")
+  remove(@Param("name") name: string) {
+    return this.categoriesService.removeCategory(name);
   }
 }

@@ -1,19 +1,10 @@
 import { DateEntity } from "src/common/entity";
 import { ProductEntity } from "src/product/product.entity";
-import {
-  Column,
-  Entity,
-  JoinTable,
-  ManyToMany,
-  PrimaryGeneratedColumn,
-} from "typeorm";
+import { Entity, JoinTable, ManyToMany, PrimaryColumn } from "typeorm";
 
 @Entity("Category")
 export class CategoryEntity extends DateEntity {
-  @PrimaryGeneratedColumn("uuid")
-  id: string;
-
-  @Column({ unique: true })
+  @PrimaryColumn({ unique: true })
   name: string;
 
   @ManyToMany(() => ProductEntity, (product) => product.categories)
@@ -21,7 +12,7 @@ export class CategoryEntity extends DateEntity {
     name: "category_product",
     joinColumn: {
       name: "categoryId",
-      referencedColumnName: "id",
+      referencedColumnName: "name",
     },
     inverseJoinColumn: {
       name: "productId",

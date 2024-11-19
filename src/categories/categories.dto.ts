@@ -1,20 +1,20 @@
-import { IsNotEmpty, IsString, Max } from "class-validator";
+import { IsNotEmpty, IsString, MaxLength } from "class-validator";
 
 export class AddCategory {
   @IsString()
   @IsNotEmpty()
-  @Max(50)
+  @MaxLength(50)
   name: string;
 }
 
 export class RenameCategory {
   @IsString()
   @IsNotEmpty()
-  @Max(50)
+  @MaxLength(50)
   oldName: string;
 
   @IsString()
   @IsNotEmpty()
-  @Max(50)
+  @MaxLength(50)
   newName: string;
 }

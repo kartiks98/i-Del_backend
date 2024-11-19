@@ -1,21 +1,32 @@
 import { Injectable } from "@nestjs/common";
 import { AddCategory, RenameCategory } from "./categories.dto";
+import { CategoriesRepository } from "./categories.repository";
+import { SearchFilter } from "src/product/product.dto";
+import { IPaginationParams } from "src/common/interface";
 
 @Injectable()
 export class CategoriesService {
-  addCategory(body: AddCategory) {
-    return "This action adds a new category";
+  constructor(private categoriesRepository: CategoriesRepository) {}
+
+  async addCategory(body: AddCategory) {
+    return await this.categoriesRepository.addCategory(body);
   }
 
-  getCategories() {
-    return `This action returns all categories`;
+  async getCategories(
+    query: SearchFilter,
+    paginationParams: IPaginationParams,
+  ) {
+    return await this.categoriesRepository.fetchCategories(
+      query,
+      paginationParams,
+    );
   }
 
-  renameCategory(id: string, body: RenameCategory) {
-    return `This action updates a #${id} category`;
+  async renameCategory(body: RenameCategory) {
+    return await this.categoriesRepository.renameCategory(body);
   }
 
-  removeCategory(id: string) {
-    return `This action removes a #${id} category`;
+  async removeCategory(name: string) {
+    return await this.categoriesRepository.removeCategory(name);
   }
 }

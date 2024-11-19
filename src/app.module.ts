@@ -6,7 +6,7 @@ import { UserModule } from "./user/user.module";
 import { ProfileModule } from "./profile/profile.module";
 import { ProductModule } from "./product/product.module";
 import { CartItemModule } from "./cart-item/cart-item.module";
-import { CategoriesModule } from './categories/categories.module';
+import { CategoriesModule } from "./categories/categories.module";
 import dbConfig from "config/db.config";
 import miscConfig from "config/misc.config";
 import * as Joi from "joi";
