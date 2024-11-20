@@ -29,7 +29,7 @@ export class CategoriesController {
   @Get("/:limit/:pageNumber")
   getCategories(
     @Query() query: SearchFilter,
-    @PaginationParamsDecorator() paginationParams: IPaginationParams
+    @PaginationParamsDecorator() paginationParams: IPaginationParams,
   ) {
     return this.categoriesService.getCategories(query, paginationParams);
   }

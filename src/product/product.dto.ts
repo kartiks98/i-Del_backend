@@ -1,4 +1,12 @@
-import { IsInt, IsNotEmpty, IsOptional, IsString, Min } from "class-validator";
+import {
+  ArrayMinSize,
+  IsArray,
+  IsInt,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  Min,
+} from "class-validator";
 
 export class CreateProduct {
   @IsNotEmpty()
@@ -8,6 +16,12 @@ export class CreateProduct {
   @IsNotEmpty()
   @IsString()
   description: string;
+
+  @IsNotEmpty()
+  @IsArray()
+  @ArrayMinSize(1)
+  @IsString({ each: true })
+  categories: string[];
 
   @IsNotEmpty()
   @IsInt()
@@ -23,6 +37,12 @@ export class UpdateProduct {
   @IsOptional()
   @IsString()
   description: string;
+
+  @IsOptional()
+  @IsArray()
+  // @ArrayMinSize(1)
+  @IsString({ each: true })
+  categories?: string[];
 
   @IsOptional()
   @IsInt()

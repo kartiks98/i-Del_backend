@@ -1,13 +1,16 @@
 import { DataSource, In, Repository } from "typeorm";
 import {
   BadRequestException,
+  ConflictException,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from "@nestjs/common";
 import { ProductEntity } from "./product.entity";
 import { CreateProduct, SearchFilter, UpdateProduct } from "./product.dto";
 import { IPaginationParams } from "src/common/interface";
 import { getPaginationParams } from "src/common/methods";
+import { CategoryEntity } from "src/categories/categories.entity";
 
 @Injectable()
 export class ProductRepository extends Repository<ProductEntity> {
@@ -15,23 +18,45 @@ export class ProductRepository extends Repository<ProductEntity> {
     super(ProductEntity, dataSource.createEntityManager());
   }
 
-  async addProduct(username: string, body: CreateProduct) {
-    const product = this.create({
-      ...body,
-      userId: username,
+  private getCategoryEntityInstancesFromCategoryNames(categories: string[]) {
+    const categoryEntities = categories.map((categoryName) => {
+      const categoryEntity = new CategoryEntity();
+      categoryEntity.name = categoryName;
+      return categoryEntity;
     });
-    await this.insert(product);
-    return product;
+    return categoryEntities;
+  }
+
+  async addProduct(username: string, body: CreateProduct) {
+    try {
+      const categories = this.getCategoryEntityInstancesFromCategoryNames(
+        body.categories
+      );
+      const product = this.create({
+        ...body,
+        categories,
+        userId: username,
+      });
+      await this.insert(product);
+      return product;
+    } catch (er) {
+      if (er.code === "23505")
+        throw new ConflictException("Product Already Exists");
+      else throw new InternalServerErrorException();
+    }
   }
 
   async fetchProducts(
     username: string,
     query: SearchFilter,
-    paginationParams: IPaginationParams,
+    paginationParams: IPaginationParams
   ) {
     const { search } = query;
 
-    const dbQuery = this.createQueryBuilder("product");
+    const dbQuery = this.createQueryBuilder("product").leftJoinAndSelect(
+      "product.categories",
+      "category"
+    );
 
     dbQuery.where({ userId: username });
 
@@ -45,9 +70,19 @@ export class ProductRepository extends Repository<ProductEntity> {
         "(product.name ILIKE :search OR product.description ILIKE :search)",
         {
           search: `%${search}%`,
-        },
+        }
       );
-
+    dbQuery.select([
+      "product.createdAt",
+      "product.updatedAt",
+      "product.id",
+      "product.name",
+      "product.description",
+      "product.availableQuantity",
+      "product.userId",
+      "product.isSelected",
+      "category.name",
+    ]);
     return await dbQuery.getManyAndCount();
   }
 
@@ -66,11 +101,38 @@ export class ProductRepository extends Repository<ProductEntity> {
     return foundProduct;
   }
 
-  async updateProduct(username: string, id: string, body: UpdateProduct) {
-    const updatedProduct = await this.update({ id, userId: username }, body);
-    if (updatedProduct.affected === 0)
-      throw new NotFoundException("Requested ID Not Found");
-    return updatedProduct.raw;
+  async updateProduct(
+    username: string,
+    id: string,
+    body: UpdateProduct,
+    previousCategories: CategoryEntity[]
+  ) {
+    try {
+      const categories = this.getCategoryEntityInstancesFromCategoryNames(
+        body.categories || []
+      );
+      const updatedProduct = await this.save(
+        categories.length
+          ? {
+              id,
+              userId: username,
+              // ...(!categories ? body : { ...body, categories }),
+              ...body,
+              categories,
+            }
+          : {
+              id,
+              userId: username,
+              ...body,
+              categories: previousCategories,
+            }
+      );
+      return updatedProduct;
+    } catch (er) {
+      if (er.code === "23505")
+        throw new ConflictException("Product Already Exists");
+      else throw new InternalServerErrorException();
+    }
   }
 
   async removeProduct(username: string, id: string) {

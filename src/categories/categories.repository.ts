@@ -1,10 +1,11 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
 } from "@nestjs/common";
-import { DataSource, Repository } from "typeorm";
+import { DataSource, In, Repository } from "typeorm";
 import { CategoryEntity } from "./categories.entity";
 import { AddCategory, RenameCategory } from "./categories.dto";
 import { getPaginationParams } from "src/common/methods";
@@ -31,7 +32,7 @@ export class CategoriesRepository extends Repository<CategoryEntity> {
 
   async fetchCategories(
     query: SearchFilter,
-    paginationParams: IPaginationParams
+    paginationParams: IPaginationParams,
   ) {
     const { search } = query;
 
@@ -50,12 +51,19 @@ export class CategoriesRepository extends Repository<CategoryEntity> {
     return await dbQuery.getManyAndCount();
   }
 
-  async fetchCategoryInfoByName(name: string) {
-    const foundOrder = await this.findOneBy({ name });
-    if (!foundOrder) {
+  async fetchCategoryInfoByName(categoryNames: string | string[]) {
+    let foundCategory: any = {};
+    if (!Array.isArray(categoryNames))
+      foundCategory = await this.findOneBy({ name: categoryNames });
+    else {
+      foundCategory = await this.findBy({ name: In(categoryNames) });
+      if (foundCategory.length !== categoryNames.length)
+        throw new BadRequestException("Invalid Category Names");
+    }
+    if (!foundCategory) {
       throw new NotFoundException("Category Name Not Found");
     }
-    return foundOrder;
+    return foundCategory;
   }
 
   async renameCategory(body: RenameCategory) {
@@ -63,7 +71,7 @@ export class CategoriesRepository extends Repository<CategoryEntity> {
     await this.fetchCategoryInfoByName(oldName);
     const updatedCategory = await this.update(
       { name: oldName },
-      { name: newName }
+      { name: newName },
     );
     if (updatedCategory.affected === 0)
       throw new NotFoundException("Category Name Not Found");

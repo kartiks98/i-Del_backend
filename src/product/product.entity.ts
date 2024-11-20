@@ -9,9 +9,11 @@ import {
   ManyToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
+  Unique,
 } from "typeorm";
 
 @Entity("products")
+@Unique(["userId", "name"])
 export class ProductEntity extends DateEntity {
   @PrimaryGeneratedColumn("uuid")
   id: string;
