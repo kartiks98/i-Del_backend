@@ -28,22 +28,16 @@ export class ProductRepository extends Repository<ProductEntity> {
   }
 
   async addProduct(username: string, body: CreateProduct) {
-    try {
-      const categories = this.getCategoryEntityInstancesFromCategoryNames(
-        body.categories
-      );
-      const product = this.create({
-        ...body,
-        categories,
-        userId: username,
-      });
-      await this.insert(product);
-      return product;
-    } catch (er) {
-      if (er.code === "23505")
-        throw new ConflictException("Product Already Exists");
-      else throw new InternalServerErrorException();
-    }
+    const categories = this.getCategoryEntityInstancesFromCategoryNames(
+      body.categories
+    );
+    const product = this.create({
+      ...body,
+      categories,
+      userId: username,
+    });
+    await this.insert(product);
+    return product;
   }
 
   async fetchProducts(
@@ -107,32 +101,26 @@ export class ProductRepository extends Repository<ProductEntity> {
     body: UpdateProduct,
     previousCategories: CategoryEntity[]
   ) {
-    try {
-      const categories = this.getCategoryEntityInstancesFromCategoryNames(
-        body.categories || []
-      );
-      const updatedProduct = await this.save(
-        categories.length
-          ? {
-              id,
-              userId: username,
-              // ...(!categories ? body : { ...body, categories }),
-              ...body,
-              categories,
-            }
-          : {
-              id,
-              userId: username,
-              ...body,
-              categories: previousCategories,
-            }
-      );
-      return updatedProduct;
-    } catch (er) {
-      if (er.code === "23505")
-        throw new ConflictException("Product Already Exists");
-      else throw new InternalServerErrorException();
-    }
+    const categories = this.getCategoryEntityInstancesFromCategoryNames(
+      body.categories || []
+    );
+    const updatedProduct = await this.save(
+      categories.length
+        ? {
+            id,
+            userId: username,
+            // ...(!categories ? body : { ...body, categories }),
+            ...body,
+            categories,
+          }
+        : {
+            id,
+            userId: username,
+            ...body,
+            categories: previousCategories,
+          }
+    );
+    return updatedProduct;
   }
 
   async removeProduct(username: string, id: string) {

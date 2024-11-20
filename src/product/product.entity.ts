@@ -13,7 +13,7 @@ import {
 } from "typeorm";
 
 @Entity("products")
-@Unique(["userId", "name"])
+// @Unique(["userId", "name"])
 export class ProductEntity extends DateEntity {
   @PrimaryGeneratedColumn("uuid")
   id: string;
