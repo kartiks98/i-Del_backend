@@ -36,7 +36,7 @@ export class ProductRepository extends Repository<ProductEntity> {
       categories,
       userId: username,
     });
-    await this.insert(product);
+    await this.save(product);
     return product;
   }
 
@@ -95,6 +95,12 @@ export class ProductRepository extends Repository<ProductEntity> {
     return foundProduct;
   }
 
+  async checkIfProductNotAlreadyExists(username: string, name: string) {
+    const foundProduct = await this.findOneBy({ name, userId: username });
+    if (!foundProduct) return true;
+    throw new BadRequestException("Product Already Exists");
+  }
+
   async updateProduct(
     username: string,
     id: string,
@@ -104,22 +110,12 @@ export class ProductRepository extends Repository<ProductEntity> {
     const categories = this.getCategoryEntityInstancesFromCategoryNames(
       body.categories || []
     );
-    const updatedProduct = await this.save(
-      categories.length
-        ? {
-            id,
-            userId: username,
-            // ...(!categories ? body : { ...body, categories }),
-            ...body,
-            categories,
-          }
-        : {
-            id,
-            userId: username,
-            ...body,
-            categories: previousCategories,
-          }
-    );
+    const updatedProduct = await this.save({
+      id,
+      userId: username,
+      ...body,
+      categories: categories.length ? categories : previousCategories,
+    });
     return updatedProduct;
   }
 

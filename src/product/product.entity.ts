@@ -9,11 +9,9 @@ import {
   ManyToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
-  Unique,
 } from "typeorm";
 
 @Entity("products")
-// @Unique(["userId", "name"])
 export class ProductEntity extends DateEntity {
   @PrimaryGeneratedColumn("uuid")
   id: string;
@@ -46,10 +44,7 @@ export class ProductEntity extends DateEntity {
   @ManyToMany(() => CategoryEntity, (category) => category.products, {
     cascade: true,
     onDelete: "CASCADE",
+    eager: true,
   })
   categories?: CategoryEntity[];
-
-  // @ManyToOne(() => OrderEntity, (order) => order.products)
-  // @JoinColumn({ name: "orderId" })
-  // order?: OrderEntity;
 }

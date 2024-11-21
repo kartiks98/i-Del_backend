@@ -8,23 +8,30 @@ import { CategoriesRepository } from "src/categories/categories.repository";
 export class ProductService {
   constructor(
     private productRepository: ProductRepository,
-    private categoriesRepository: CategoriesRepository,
+    private categoriesRepository: CategoriesRepository
   ) {}
 
   async addProduct(username: string, body: CreateProduct) {
-    await this.categoriesRepository.fetchCategoryInfoByName(body.categories);
-    return await this.productRepository.addProduct(username, body);
+    const isProductAlreadyNotExists =
+      await this.productRepository.checkIfProductNotAlreadyExists(
+        username,
+        body.name
+      );
+    if (isProductAlreadyNotExists) {
+      await this.categoriesRepository.fetchCategoryInfoByName(body.categories);
+      return await this.productRepository.addProduct(username, body);
+    }
   }
 
   async getProducts(
     username: string,
     query: SearchFilter,
-    paginationParams: IPaginationParams,
+    paginationParams: IPaginationParams
   ) {
     return await this.productRepository.fetchProducts(
       username,
       query,
-      paginationParams,
+      paginationParams
     );
   }
 
@@ -35,13 +42,12 @@ export class ProductService {
   async updateProduct(username: string, id: string, body: UpdateProduct) {
     const previousCategories =
       await this.categoriesRepository.fetchCategoryInfoByName(body.categories);
-    console.log("previousCategories", previousCategories);
 
     return await this.productRepository.updateProduct(
       username,
       id,
       body,
-      previousCategories,
+      previousCategories
     );
   }
 
