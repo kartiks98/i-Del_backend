@@ -19,3 +19,15 @@
 ## Node Version
 
 - 18.16.0
+
+## Tech Used
+
+- Nest JS
+
+- TypeORM
+
+- TypeScript
+
+- PostgreSQL
+
+- Passport
