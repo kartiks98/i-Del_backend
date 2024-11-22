@@ -30,4 +30,4 @@
 
 - PostgreSQL
 
-- Passport
+- Passport JS
