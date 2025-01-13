@@ -10,6 +10,15 @@ postgres=# create user bob with superuser password 'admin';
 ALTER USER postgres PASSWORD 'admin';
 sudo -s
 
+
+GRANT CONNECT ON DATABASE database_name TO new_user;
+\c database_name new_user
+
+psql -U new_user -d database_name
+
+sudo systemctl restart postgresql
+
+
 drop database "test-db";
 drop user "test-user";
 
