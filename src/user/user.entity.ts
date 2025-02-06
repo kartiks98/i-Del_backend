@@ -20,9 +20,7 @@ export class UserEntity extends DateEntity {
   @Column({ nullable: true })
   password: string;
 
-  @OneToMany(() => OrderEntity, (order) => order.user, {
-    cascade: true,
-  })
+  @OneToMany(() => OrderEntity, (order) => order.user)
   orders: OrderEntity[];
 
   @OneToMany(() => ProductEntity, (product) => product.user)
@@ -31,6 +29,6 @@ export class UserEntity extends DateEntity {
   @OneToMany(() => CartItemEntity, (cartItem) => cartItem.user)
   cartItems: CartItemEntity[];
 
-  @OneToOne(() => ProfileEntity, (profile) => profile.user, { cascade: true })
+  @OneToOne(() => ProfileEntity, (profile) => profile.user)
   profile: ProfileEntity;
 }
