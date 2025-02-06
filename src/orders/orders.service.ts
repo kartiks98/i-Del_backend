@@ -10,19 +10,19 @@ import { REQ_QNTY_NOT_AVAIL_MSG } from "src/common/constants";
 export class OrdersService {
   constructor(
     private orderRepository: OrderRepository,
-    private productService: ProductService,
+    private productService: ProductService
   ) {}
 
   async getOrders(
     query: FilterQueryParams,
     username: string,
-    paginationParams: IPaginationParams,
+    paginationParams: IPaginationParams
     // ): Promise<[OrderEntity[], number]> {
   ): Promise<any> {
     return await this.orderRepository.fetchOrders(
       query,
       username,
-      paginationParams,
+      paginationParams
     );
   }
 
@@ -34,10 +34,14 @@ export class OrdersService {
     return await this.orderRepository.deleteOrder(id, username);
   }
 
+  async deleteAllOrders(): Promise<OrderEntity> {
+    return await this.orderRepository.deleteAllOrders();
+  }
+
   async updateOrder(
     id: string,
     body: UpdateOrder,
-    username: string,
+    username: string
   ): Promise<OrderEntity> {
     return await this.orderRepository.updateOrder(id, body, username);
   }
@@ -47,14 +51,14 @@ export class OrdersService {
     const { productIds, quantities } = body;
     const products = await this.productService.getProductInfo(
       username,
-      productIds,
+      productIds
     );
     const availableQuantities = products.map(
       ({ availableQuantity }, i: number) => {
         if (quantities[i] > availableQuantity)
           throw new BadRequestException(REQ_QNTY_NOT_AVAIL_MSG);
         return availableQuantity;
-      },
+      }
     );
     if (productIds.length !== quantities.length)
       throw new BadRequestException("Quantities should be equal to Products");
@@ -62,7 +66,7 @@ export class OrdersService {
     return await this.orderRepository.createOrder(
       body,
       username,
-      availableQuantities,
+      availableQuantities
     );
   }
 }

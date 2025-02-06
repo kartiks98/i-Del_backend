@@ -29,7 +29,7 @@ export class ProductController {
   getProducts(
     @Username() username: string,
     @Query() query: SearchFilter,
-    @PaginationParamsDecorator() paginationParams: IPaginationParams,
+    @PaginationParamsDecorator() paginationParams: IPaginationParams
   ) {
     return this.productService.getProducts(username, query, paginationParams);
   }
@@ -37,7 +37,7 @@ export class ProductController {
   @Get(":id")
   getProductnfo(
     @Username() username: string,
-    @Param("id") ids: string | string[],
+    @Param("id") ids: string | string[]
   ) {
     return this.productService.getProductInfo(username, ids);
   }
@@ -46,7 +46,7 @@ export class ProductController {
   updateProduct(
     @Username() username: string,
     @Param("id") id: string,
-    @Body() body: UpdateProduct,
+    @Body() body: UpdateProduct
   ) {
     return this.productService.updateProduct(username, id, body);
   }
@@ -54,5 +54,10 @@ export class ProductController {
   @Delete(":id")
   removeProduct(@Username() username: string, @Param("id") id: string) {
     return this.productService.removeProduct(username, id);
+  }
+
+  @Delete()
+  removeAllProducts() {
+    return this.productService.removeAllProducts();
   }
 }

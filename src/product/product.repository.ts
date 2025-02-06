@@ -29,7 +29,7 @@ export class ProductRepository extends Repository<ProductEntity> {
 
   async addProduct(username: string, body: CreateProduct) {
     const categories = this.getCategoryEntityInstancesFromCategoryNames(
-      body.categories,
+      body.categories
     );
     const product = this.create({
       ...body,
@@ -43,13 +43,13 @@ export class ProductRepository extends Repository<ProductEntity> {
   async fetchProducts(
     username: string,
     query: SearchFilter,
-    paginationParams: IPaginationParams,
+    paginationParams: IPaginationParams
   ) {
     const { search } = query;
 
     const dbQuery = this.createQueryBuilder("product").leftJoinAndSelect(
       "product.categories",
-      "category",
+      "category"
     );
 
     dbQuery.where({ userId: username });
@@ -64,7 +64,7 @@ export class ProductRepository extends Repository<ProductEntity> {
         "(product.name ILIKE :search OR product.description ILIKE :search)",
         {
           search: `%${search}%`,
-        },
+        }
       );
     dbQuery.select([
       "product.createdAt",
@@ -105,10 +105,10 @@ export class ProductRepository extends Repository<ProductEntity> {
     username: string,
     id: string,
     body: UpdateProduct,
-    previousCategories: CategoryEntity[],
+    previousCategories: CategoryEntity[]
   ) {
     const categories = this.getCategoryEntityInstancesFromCategoryNames(
-      body.categories || [],
+      body.categories || []
     );
     const updatedProduct = await this.save({
       id,
@@ -121,6 +121,13 @@ export class ProductRepository extends Repository<ProductEntity> {
 
   async removeProduct(username: string, id: string) {
     const removedProduct = await this.delete({ id, userId: username });
+    if (removedProduct.affected === 0)
+      throw new NotFoundException("Requested ID Not Found");
+    return removedProduct.raw;
+  }
+
+  async removeAllProducts() {
+    const removedProduct = await this.delete({});
     if (removedProduct.affected === 0)
       throw new NotFoundException("Requested ID Not Found");
     return removedProduct.raw;

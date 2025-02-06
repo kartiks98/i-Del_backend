@@ -36,13 +36,11 @@ export class ProductEntity extends DateEntity {
   user: UserEntity;
 
   @ManyToMany(() => OrderEntity, (order) => order.products, {
-    cascade: true,
     onDelete: "CASCADE",
   })
   orders?: OrderEntity[];
 
   @ManyToMany(() => CategoryEntity, (category) => category.products, {
-    cascade: true,
     onDelete: "CASCADE",
     eager: true,
   })

@@ -8,14 +8,14 @@ import { CategoriesRepository } from "src/categories/categories.repository";
 export class ProductService {
   constructor(
     private productRepository: ProductRepository,
-    private categoriesRepository: CategoriesRepository,
+    private categoriesRepository: CategoriesRepository
   ) {}
 
   async addProduct(username: string, body: CreateProduct) {
     const isProductAlreadyNotExists =
       await this.productRepository.checkIfProductNotAlreadyExists(
         username,
-        body.name,
+        body.name
       );
     if (isProductAlreadyNotExists) {
       await this.categoriesRepository.fetchCategoryInfoByName(body.categories);
@@ -26,12 +26,12 @@ export class ProductService {
   async getProducts(
     username: string,
     query: SearchFilter,
-    paginationParams: IPaginationParams,
+    paginationParams: IPaginationParams
   ) {
     return await this.productRepository.fetchProducts(
       username,
       query,
-      paginationParams,
+      paginationParams
     );
   }
 
@@ -47,11 +47,15 @@ export class ProductService {
       username,
       id,
       body,
-      previousCategories,
+      previousCategories
     );
   }
 
   async removeProduct(username: string, id: string) {
     return await this.productRepository.removeProduct(username, id);
+  }
+
+  async removeAllProducts() {
+    return await this.productRepository.removeAllProducts();
   }
 }

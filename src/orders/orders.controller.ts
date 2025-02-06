@@ -25,7 +25,7 @@ export class TasksController {
   getOrders(
     @Username() username: string,
     @Query() query: FilterQueryParams,
-    @PaginationParamsDecorator() paginationParams: IPaginationParams,
+    @PaginationParamsDecorator() paginationParams: IPaginationParams
   ): Promise<[OrderEntity[], number]> {
     return this.ordersService.getOrders(query, username, paginationParams);
   }
@@ -33,7 +33,7 @@ export class TasksController {
   @Get("/:id")
   getOrderInfo(
     @Username() username: string,
-    @Param("id") id: string,
+    @Param("id") id: string
   ): Promise<OrderEntity> {
     return this.ordersService.getOrderInfo(id, username);
   }
@@ -41,16 +41,21 @@ export class TasksController {
   @Delete("/:id")
   deleteOrder(
     @Username() username: string,
-    @Param("id") id: string,
+    @Param("id") id: string
   ): Promise<OrderEntity> {
     return this.ordersService.deleteOrder(id, username);
+  }
+
+  @Delete()
+  deleteAllOrders(): Promise<OrderEntity> {
+    return this.ordersService.deleteAllOrders();
   }
 
   @Patch("/:id")
   updateOrder(
     @Username() username: string,
     @Param("id") id: string,
-    @Body() body: UpdateOrder,
+    @Body() body: UpdateOrder
   ): Promise<OrderEntity> {
     return this.ordersService.updateOrder(id, body, username);
   }
@@ -58,7 +63,7 @@ export class TasksController {
   @Post("/create-order")
   createOrder(
     @Username() username: string,
-    @Body() body: CreateOrder,
+    @Body() body: CreateOrder
   ): Promise<OrderEntity> {
     return this.ordersService.createOrder(body, username);
   }

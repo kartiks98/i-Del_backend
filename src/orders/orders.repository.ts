@@ -18,7 +18,7 @@ export class OrderRepository extends Repository<OrderEntity> {
       productIds: string[];
       quantities: number[];
     },
-    availableQuantities: number[],
+    availableQuantities: number[]
   ) {
     const { productIds, quantities } = body;
     const productsEntities = productIds.map((productId, i) => {
@@ -33,7 +33,7 @@ export class OrderRepository extends Repository<OrderEntity> {
   async fetchOrders(
     query: FilterQueryParams,
     username: string,
-    paginationParams: IPaginationParams,
+    paginationParams: IPaginationParams
   ) {
     const { search, status } = query;
 
@@ -52,7 +52,7 @@ export class OrderRepository extends Repository<OrderEntity> {
         "(product.name ILIKE :search OR product.description ILIKE :search)",
         {
           search: `%${search}%`,
-        },
+        }
       );
     status && dbQuery.andWhere("order.status=:status", { status });
 
@@ -74,10 +74,17 @@ export class OrderRepository extends Repository<OrderEntity> {
     return deletedOrder.raw;
   }
 
+  async deleteAllOrders(): Promise<OrderEntity> {
+    const deletedOrder = await this.delete({});
+    if (deletedOrder.affected === 0)
+      throw new NotFoundException("Requested ID Not Found");
+    return deletedOrder.raw;
+  }
+
   async updateOrder(
     id: string,
     body: UpdateOrder,
-    username: string,
+    username: string
   ): Promise<OrderEntity> {
     const updatedOrder = await this.update({ id, userId: username }, body);
     if (updatedOrder.affected === 0)
@@ -88,11 +95,11 @@ export class OrderRepository extends Repository<OrderEntity> {
   async createOrder(
     body: CreateOrder,
     username: string,
-    availableQuantities: number[],
+    availableQuantities: number[]
   ) {
     const products = this.getProductEntityInstancesFromIds(
       body,
-      availableQuantities,
+      availableQuantities
     );
     const order = this.create({
       ...body,
